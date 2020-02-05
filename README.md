@@ -1,4 +1,4 @@
-![](https://github.com/tmw/bintreeviz/workflows/Elixir%20CI/badge.svg)
+![](https://github.com/tmw/bintreevis/workflows/Elixir%20CI/badge.svg)
 
 # Bintreeviz
 
