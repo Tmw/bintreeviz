@@ -1,3 +1,5 @@
+![](https://github.com/tmw/bintreeviz/workflows/Elixir%20CI/badge.svg)
+
 # Bintreeviz
 
 Bintreeviz is an Elixir implementation of the Wetherell and Shannon
