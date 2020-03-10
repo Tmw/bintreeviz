@@ -83,7 +83,7 @@ defmodule Bintreeviz.Positioner do
       end
 
     # update node's position
-    root = %Node{root | x: new_x, y: depth * 5, offset: Map.get(offsets, depth, 0)}
+    root = %Node{root | x: new_x, y: depth * 4, offset: Map.get(offsets, depth, 0)}
 
     nexts = Map.put(nexts, depth, new_x + Node.width(root))
 
