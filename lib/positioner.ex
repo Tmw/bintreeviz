@@ -1,32 +1,38 @@
 defmodule Bintreeviz.Positioner do
-  require Logger
+  # internal struct to keep track of positioning walk results
+  defmodule WalkResult do
+    @moduledoc false
+    defstruct node: nil, nexts: nil, offsets: nil
+  end
 
   @moduledoc """
   Module to do the actual positioning. As described in the original paper,
   this algorithm works with two loops to keep the algorithm performing in O(N).
   """
+
+  @margin 2
+  @node_height 4
   alias Bintreeviz.Node
 
   @doc "position/1 takes the root node and positions it and all its child nodes accordingly"
   @spec position(Node.t()) :: Node.t()
   def position(%Node{} = root) do
-    {root, nexts, _offsets} = first_walk(root)
+    %WalkResult{node: node} =
+      root
+      |> first_walk()
+      |> second_walk()
 
-    {root, _nexts} =
-      second_walk(
-        root,
-        nexts
-      )
-
-    root
+    node
   end
 
+  @spec first_walk(Node.t(), non_neg_integer(), map(), map()) :: {Node.t(), map(), map()}
   defp first_walk(root, depth \\ 0, nexts \\ %{}, offsets \\ %{})
 
-  defp first_walk(nil, _depth, nexts, offsets), do: {nil, nexts, offsets}
+  defp first_walk(nil, _depth, nexts, offsets),
+    do: %WalkResult{node: nil, nexts: nexts, offsets: offsets}
 
   defp first_walk(%Node{} = root, depth, nexts, offsets) do
-    {left_child, nexts, offsets} =
+    %WalkResult{node: left_child, nexts: nexts, offsets: offsets} =
       first_walk(
         root.left_child,
         depth + 1,
@@ -34,7 +40,7 @@ defmodule Bintreeviz.Positioner do
         offsets
       )
 
-    {right_child, nexts, offsets} =
+    %WalkResult{node: right_child, nexts: nexts, offsets: offsets} =
       first_walk(
         root.right_child,
         depth + 1,
@@ -44,65 +50,72 @@ defmodule Bintreeviz.Positioner do
 
     # update node with updated children
     root = %Node{root | left_child: left_child, right_child: right_child}
-    width = Node.width(root)
+    root_width = Node.width(root) + @margin
 
-    # find the nodes initial place. Might be adjusted later in the second walk.
-    place =
-      cond do
-        Node.is_leaf?(root) ->
-          Map.get(nexts, depth, 0)
-
-        root.left_child == nil ->
-          root.right_child.x - floor(width / 2)
-
-        root.right_child == nil ->
-          root.left_child.x + floor(width / 2)
-
-        root.left_child != nil && root.right_child != nil ->
-          floor((root.left_child.x + root.right_child.x + Node.width(root.right_child)) / 2) -
-            floor(Node.width(root) / 2)
-      end
+    # find the nodes initial position. This might be overwritten in the second
+    # walk due to children shifting its parent position.
+    preliminary_x = get_preliminary_x(root, nexts, depth)
 
     # update offsets map with the higher value between the currently known
-    # offset, or the nexts - place value.
-    offsets =
-      Map.put(
-        offsets,
-        depth,
-        max(
-          Map.get(offsets, depth, 0),
-          Map.get(nexts, depth, 0) - place
-        )
-      )
+    # offset, or the nexts - preliminary_x value.
+    bigger_offset = max(Map.get(offsets, depth, 0), Map.get(nexts, depth, 0) - preliminary_x)
+    offsets = Map.put(offsets, depth, bigger_offset)
 
-    # based on previous offsets and calculated place, determine
-    # the new X position of the node for the first walk.
-    new_x =
-      if Node.is_leaf?(root) do
-        place
-      else
-        place + Map.get(offsets, depth, 0)
+    # based on previous offsets and calculated preliminary_x, determine
+    # the new preliminary x position of the node for the first walk.
+    preliminary_x =
+      case Node.is_leaf?(root) do
+        true -> preliminary_x
+        false -> preliminary_x + Map.get(offsets, depth, 0)
       end
 
     # update node's position
-    root = %Node{root | x: new_x, y: depth * 4, offset: Map.get(offsets, depth, 0)}
+    root = %Node{
+      root
+      | x: preliminary_x,
+        y: depth * @node_height,
+        offset: Map.get(offsets, depth, 0)
+    }
 
-    nexts = Map.put(nexts, depth, new_x + Node.width(root))
+    # update nexts
+    nexts = Map.put(nexts, depth, preliminary_x + root_width)
 
-    {root, nexts, offsets}
+    %WalkResult{
+      node: root,
+      nexts: nexts,
+      offsets: offsets
+    }
   end
 
+  defp get_preliminary_x(%Node{} = root, nexts, depth) do
+    root_width = Node.width(root) + @margin
+
+    case root do
+      %Node{left_child: nil, right_child: nil} ->
+        Map.get(nexts, depth, 0)
+
+      %Node{left_child: nil, right_child: %Node{} = right_child} ->
+        right_child.x - floor(root_width / 2)
+
+      %Node{left_child: %Node{} = left_child, right_child: nil} ->
+        left_child.x + floor(root_width / 2)
+
+      %Node{left_child: %Node{} = left_child, right_child: %Node{} = right_child} ->
+        floor((left_child.x + right_child.x + Node.width(right_child) + @margin) / 2) -
+          floor(root_width / 2)
+    end
+  end
+
+  @spec second_walk(WalkResult.t()) :: WalkResult.t()
+  defp second_walk(%WalkResult{node: root, nexts: nexts}), do: second_walk(root, nexts)
+
+  @spec second_walk(Node.t(), map(), non_neg_integer()) :: WalkResult.t()
   defp second_walk(node, nexts, depth \\ 0, modifier_sum \\ 0)
-
-  defp second_walk(nil, nexts, _depth, _modifier_sum) do
-    {nil, nexts}
-  end
+  defp second_walk(nil, nexts, _depth, _modifier_sum), do: %WalkResult{node: nil, nexts: nexts}
 
   defp second_walk(%Node{} = root, nexts, depth, modifier_sum) do
-    root = %Node{root | x: root.x + modifier_sum}
-
     # recurse and calculate for left child first
-    {left_child, nexts} =
+    %WalkResult{node: left_child, nexts: nexts} =
       second_walk(
         root.left_child,
         nexts,
@@ -110,7 +123,8 @@ defmodule Bintreeviz.Positioner do
         modifier_sum + root.offset
       )
 
-    {right_child, nexts} =
+    # then calculate for the right child
+    %WalkResult{node: right_child, nexts: nexts} =
       second_walk(
         root.right_child,
         nexts,
@@ -118,8 +132,14 @@ defmodule Bintreeviz.Positioner do
         modifier_sum + root.offset
       )
 
-    root = %Node{root | left_child: left_child, right_child: right_child}
+    # then combine results
+    root = %Node{
+      root
+      | left_child: left_child,
+        right_child: right_child,
+        x: root.x + modifier_sum
+    }
 
-    {root, nexts}
+    %WalkResult{nexts: nexts, node: root}
   end
 end

@@ -28,7 +28,8 @@ defmodule Bintreeviz do
     # - :medium
     # - :large
     # - :weird
-    root = Bintreeviz.Factory.build(:weird)
-    render(root)
+    Bintreeviz.Factory.build(:weird)
+    |> render()
+    |> IO.puts()
   end
 end

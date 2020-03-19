@@ -5,16 +5,11 @@ defmodule Bintreeviz.AsciiRenderer do
   quite naively but we'll fix that in a next iteration.
   """
 
-  @node_padding 4
-  @offset_y 1
-  @offset_x 1
   alias Bintreeviz.Node
 
   @spec render(Node.t()) :: String.t()
   def render(%Node{} = root) do
-    Textmatrix.new()
-    |> do_render(root)
-    |> IO.puts()
+    do_render(Textmatrix.new(), root)
   end
 
   defp do_render(buffer, nil), do: buffer
@@ -25,9 +20,9 @@ defmodule Bintreeviz.AsciiRenderer do
 
     buffer =
       buffer
-      |> Textmatrix.write(root.x + @offset_x, root.y + @offset_y, top_line)
-      |> Textmatrix.write(root.x + @offset_x, root.y + @offset_y + 1, "┃ #{root.label} ┃")
-      |> Textmatrix.write(root.x + @offset_x, root.y + 2 + @offset_y, bottom_line)
+      |> Textmatrix.write(root.x, root.y, top_line)
+      |> Textmatrix.write(root.x, root.y + 1, "┃ #{root.label} ┃")
+      |> Textmatrix.write(root.x, root.y + 2, bottom_line)
 
     buffer
     |> do_render(root.left_child)
@@ -54,10 +49,10 @@ defmodule Bintreeviz.AsciiRenderer do
 
   defp connect(buffer, %Node{} = root, %Node{} = child) do
     root_anchor_x = (node_width(root) / 2 + root.x) |> floor()
-    root_anchor_y = root.y + 3
+    root_anchor_y = root.y + 2
 
     child_anchor_x = (node_width(child) / 2 + child.x) |> floor()
-    child_anchor_y = child.y + 1
+    child_anchor_y = child.y
 
     # generate the horizontal connecting line between node's anchor points
     line =
@@ -128,8 +123,8 @@ defmodule Bintreeviz.AsciiRenderer do
   end
 
   # return the node's label length + padding + border.
-  defp node_width(%Node{label: label} = _node) do
-    String.length(label) + @node_padding
+  defp node_width(%Node{} = node) do
+    Node.width(node)
   end
 
   defp repeat_char(times, char) do
