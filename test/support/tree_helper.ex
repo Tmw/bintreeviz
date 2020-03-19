@@ -1,9 +1,6 @@
 defmodule Bintreeviz.TreeHelpers do
+  @moduledoc false
   alias Bintreeviz.Node
-
-  @moduledoc """
-  Helper functions to run assertions against the tree structure(s).
-  """
 
   # Helper function to traverse the tree and find the first node with the given
   # label. Node: This requires the node labels to be unique in the tree.

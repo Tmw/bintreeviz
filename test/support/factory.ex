@@ -1,4 +1,5 @@
 defmodule Bintreeviz.Factory do
+  @moduledoc false
   alias Bintreeviz.Node
 
   def build(:simple) do
