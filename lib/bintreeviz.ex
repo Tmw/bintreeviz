@@ -14,6 +14,8 @@ defmodule Bintreeviz do
     AsciiRenderer
   }
 
+  @doc "render/1 takes the root node, positions it and then renders it into a string"
+  @spec render(Node.t()) :: String.t()
   def render(%Node{} = root) do
     root
     |> Positioner.position()

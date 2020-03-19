@@ -7,6 +7,8 @@ defmodule Bintreeviz.Positioner do
   """
   alias Bintreeviz.Node
 
+  @doc "position/1 takes the root node and positions it and all its child nodes accordingly"
+  @spec position(Node.t()) :: Node.t()
   def position(%Node{} = root) do
     {root, nexts, _offsets} = first_walk(root)
 

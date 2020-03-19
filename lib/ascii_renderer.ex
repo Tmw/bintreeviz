@@ -10,6 +10,7 @@ defmodule Bintreeviz.AsciiRenderer do
   @offset_x 1
   alias Bintreeviz.Node
 
+  @spec render(Node.t()) :: String.t()
   def render(%Node{} = root) do
     Textmatrix.new()
     |> do_render(root)
