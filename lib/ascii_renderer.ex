@@ -58,11 +58,52 @@ defmodule Bintreeviz.AsciiRenderer do
     child_anchor_x = (node_width(child) / 2 + child.x) |> floor()
     child_anchor_y = child.y + 1
 
+    # generate the horizontal connecting line between node's anchor points
+    line =
+      (root_anchor_x - child_anchor_x)
+      |> abs()
+      |> Kernel.-(1)
+      |> repeat_char("━")
+
+    # decide on parent's corner piece
+    parent_corner_piece =
+      case root do
+        %Node{left_child: %Node{} = _left_child, right_child: %Node{} = _right_child} ->
+          # Got two children
+          "┻"
+
+        %Node{left_child: %Node{} = _left_child, right_child: nil} ->
+          # Got only left child
+          "┛"
+
+        %Node{left_child: nil, right_child: %Node{} = _right_child} ->
+          # Got only right child
+          "┗"
+      end
+
+    # decide which way the corner pieces should face
+    child_corner_pieces =
+      cond do
+        root_anchor_x > child_anchor_x ->
+          # child is left
+          [top: "┛", bottom: "┏"]
+
+        child_anchor_x > root_anchor_x ->
+          # child is right
+          [top: "┗", bottom: "┓"]
+      end
+
     buffer
+    # draw connecting corner pieces for parent
     |> Textmatrix.write(root_anchor_x, root_anchor_y, "┳")
-    |> Textmatrix.write(root_anchor_x, root_anchor_y + 1, "┻")
-    |> Textmatrix.write(child_anchor_x, child_anchor_y - 1, "┳")
+    |> Textmatrix.write(root_anchor_x, root_anchor_y + 1, parent_corner_piece)
+
+    # draw connecting corner pices
+    |> Textmatrix.write(child_anchor_x, child_anchor_y - 1, child_corner_pieces[:bottom])
     |> Textmatrix.write(child_anchor_x, child_anchor_y, "┻")
+
+    # draw connecting horizontal line
+    |> Textmatrix.write(min(root_anchor_x, child_anchor_x) + 1, root_anchor_y + 1, "#{line}")
   end
 
   defp make_line_for_node(%Node{} = node, :top) do
