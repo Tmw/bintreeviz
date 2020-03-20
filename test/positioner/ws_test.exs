@@ -1,7 +1,7 @@
-defmodule Bintreeviz.Positioner.Test do
+defmodule Bintreeviz.Positioner.WS.Test do
   use ExUnit.Case
   import Bintreeviz.{Factory, TreeHelpers}
-  alias Bintreeviz.Positioner
+  alias Bintreeviz.Positioner.WS, as: Positioner
 
   describe "#position" do
     test "positions a simple binary tree" do

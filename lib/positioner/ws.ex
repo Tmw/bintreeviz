@@ -1,14 +1,15 @@
-defmodule Bintreeviz.Positioner do
+defmodule Bintreeviz.Positioner.WS do
+  @moduledoc """
+  Module to do the positioning following the WS algorithm. As described in the original paper,
+  this algorithm works with two loops to keep the algorithm performing in O(N).
+  """
+
+  @behaviour Bintreeviz.Positioner
   # internal struct to keep track of positioning walk results
   defmodule WalkResult do
     @moduledoc false
     defstruct node: nil, nexts: nil, offsets: nil
   end
-
-  @moduledoc """
-  Module to do the actual positioning. As described in the original paper,
-  this algorithm works with two loops to keep the algorithm performing in O(N).
-  """
 
   @margin 2
   @node_height 4
@@ -16,6 +17,7 @@ defmodule Bintreeviz.Positioner do
 
   @doc "position/1 takes the root node and positions it and all its child nodes accordingly"
   @spec position(Node.t()) :: Node.t()
+  @impl true
   def position(%Node{} = root) do
     %WalkResult{node: node} =
       root

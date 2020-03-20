@@ -1,33 +1,48 @@
 defmodule Bintreeviz do
   @moduledoc """
-  Bintreeviz is an Elixir implementation of the Wetherell and Shannon
-  alhorithm as described in their 1979 publication of Tidy Drawings of Trees in
-  IEEE.
+  Bintreeviz is a binary tree visualizer for Elixir. Its main purpose is to convert a given tree structure into a string representation.
 
-  Its main purpose is to convert a given tree structure in a string representation
-  of the tree using ASCII characters.
+  ## Positioning
+  It supports pluggable algorithms for positioning of the individual nodes. Out-of-the-box it comeswith the Wetherell and Shannon (WS) algorithm for drawing tidy trees as described in IEEE.
+
+  ## Rendering
+  It supports pluggable renderers for outputting the positioned tree to a string format. out-of-the-box it comes with an ASCII renderer which will use a configurable charset to draw the tree.
+
+  ## Configuration options
+  The renderer takes a keyword list with configuration options:
+
+  * `renderer`
+  Which renderer to use. It will default to the ASCII renderer which will render the tree using [Box Drawing Characters](https://en.wikipedia.org/wiki/Box-drawing_character) and can be printed to stdout as shown in the examples.
+
+  * `positioner`
+  Which positioning algorithm to use. It defaults to Wetherell and Shannon (WS).
   """
 
   alias Bintreeviz.{
     Node,
     Positioner,
+    Positioner,
     Renderer
   }
 
-  @type render_options :: [renderer: Renderer.t()] | nil
+  @type render_options :: [
+          renderer: Renderer.t(),
+          positioner: Positioner.t()
+        ]
+
   @default_options [
-    renderer: Renderer.Ascii
+    renderer: Renderer.Ascii,
+    positioner: Positioner.WS
   ]
 
   @doc "render/1 takes the root node, positions it and then renders it into a string"
   @spec render(Node.t(), render_options()) :: String.t()
   def render(%Node{} = root, options \\ @default_options) do
-    renderer = get_renderer(options)
+    renderer = Keyword.get(options, :renderer)
+    positioner = Keyword.get(options, :positioner)
 
     root
-    |> Positioner.position()
+    |> positioner.position()
     |> renderer.render()
   end
-
-  defp get_renderer(renderer: renderer), do: renderer
 end
