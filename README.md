@@ -1,7 +1,7 @@
 ![](https://github.com/tmw/bintreevis/workflows/Elixir%20CI/badge.svg)
 
 # 🌳 Bintreeviz
-Bintreeviz is a binary tree visualizer for Elixir. Its main purpose is to convert a given tree structure into a string representation. Out of the box it supports the Wetherell and Shannon alhorithm as described in their 1979 publication of Tidy Drawings of Trees in IEEE, but is configurable using behaviours.
+Bintreeviz is a binary tree visualizer for Elixir. Its main purpose is to convert a given tree structure into a string representation. Out of the box it supports the Wetherell and Shannon alhorithm as described in their 1979 publication of Tidy Drawings of Trees in IEEE and renders to ASCII characters using the [Box Drawing Character](https://en.wikipedia.org/wiki/Box-drawing_character) set, but all of these are configurable options.
 
 ## Example
 
