@@ -1,13 +1,13 @@
-defmodule Bintreeviz.AsciiRenderer do
+defmodule Bintreeviz.Renderer.Ascii do
   @moduledoc """
-  Simple ASCII rendering module which, given a tree structure, render its
-  nodes to STDOUT using ASCII characters such as dashes and pipes. Its implemented
-  quite naively but we'll fix that in a next iteration.
+  Simple ASCII rendering module which, given a tree structure, render its nodes to STDOUT using ASCII characters such as dashes and pipes. Its implemented quite naively but we'll fix that in a next iteration.
   """
-
+  @behaviour Bintreeviz.Renderer
   alias Bintreeviz.Node
 
+  @doc "render/1 takes the starting node and converts it to a rendered representation using ASCII characters"
   @spec render(Node.t()) :: String.t()
+  @impl true
   def render(%Node{} = root) do
     render(Textmatrix.new(), root)
   end
