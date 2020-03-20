@@ -29,15 +29,5 @@ defmodule Bintreeviz do
     |> renderer.render()
   end
 
-  def test do
-    # other build options are:
-    # - :simple
-    # - :medium
-    # - :large
-    # - :weird
-    Bintreeviz.Factory.build(:weird)
-    |> render()
-    |> IO.puts()
-  end
   defp get_renderer(renderer: renderer), do: renderer
 end
