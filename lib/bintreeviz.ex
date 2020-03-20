@@ -17,7 +17,7 @@ defmodule Bintreeviz do
   * `positioner`
   Which positioning algorithm to use. It defaults to Wetherell and Shannon (WS).
 
-  * `ascii_charset`
+  * `ascii_renderer_charset`
   Renderer specific configuration to configure which charset to use while rendering using the ASCII renderer.
   """
 
@@ -41,7 +41,8 @@ defmodule Bintreeviz do
 
   @doc "render/1 takes the root node, positions it and then renders it into a string"
   @spec render(Node.t(), render_options()) :: String.t()
-  def render(%Node{} = root, options \\ @default_options) do
+  def render(%Node{} = root, options \\ []) do
+    options = Keyword.merge(@default_options, options)
     renderer = Keyword.get(options, :renderer)
     positioner = Keyword.get(options, :positioner)
 
