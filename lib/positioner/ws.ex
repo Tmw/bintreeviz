@@ -12,7 +12,7 @@ defmodule Bintreeviz.Positioner.WS do
   end
 
   @margin 2
-  @node_height 4
+  @node_height 6
   alias Bintreeviz.Node
 
   @doc "position/1 takes the root node and positions it and all its child nodes accordingly"

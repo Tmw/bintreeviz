@@ -87,14 +87,16 @@ defmodule Bintreeviz.Renderer.Ascii do
     buffer
     # draw connecting characters
     |> Textmatrix.write(root_anchor_x, root_anchor_y, charset.node_connector_bottom())
-    |> Textmatrix.write(root_anchor_x, root_anchor_y + 1, parent_connection_char(root, options))
+    |> Textmatrix.write(root_anchor_x, root_anchor_y + 1, charset.vertical_line())
+    |> Textmatrix.write(root_anchor_x, root_anchor_y + 2, parent_connection_char(root, options))
+    |> Textmatrix.write(child_anchor_x, child_anchor_y - 1, charset.vertical_line())
 
     # draw connecting corner pices
-    |> Textmatrix.write(child_anchor_x, child_anchor_y - 1, child_connection_char)
+    |> Textmatrix.write(child_anchor_x, child_anchor_y - 2, child_connection_char)
     |> Textmatrix.write(child_anchor_x, child_anchor_y, charset.node_connector_top())
 
     # draw connecting horizontal line
-    |> Textmatrix.write(min(root_anchor_x, child_anchor_x) + 1, root_anchor_y + 1, "#{line}")
+    |> Textmatrix.write(min(root_anchor_x, child_anchor_x) + 1, root_anchor_y + 2, "#{line}")
   end
 
   defp parent_connection_char(%Node{} = root, options) do

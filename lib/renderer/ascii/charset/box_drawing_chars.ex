@@ -1,6 +1,6 @@
 defmodule Bintreeviz.Renderer.Ascii.Charset.BoxDrawingChars do
   @moduledoc """
-  BoxDrawingChars defines the characters to use for draing tidy boxes following the [Box Drawing Characters](https://en.wikipedia.org/wiki/Box-drawing_character)
+  BoxDrawingChars defines the characters to use for drawing tidy boxes following the [Box Drawing Characters](https://en.wikipedia.org/wiki/Box-drawing_character)
   """
   @behaviour Bintreeviz.Renderer.Ascii.Charset
 
