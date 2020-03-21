@@ -1,4 +1,8 @@
 defmodule Bintreeviz.Renderer.Ascii.Charset do
+  @moduledoc """
+  Bintreeviz.Renderer.Ascii.Charset describes the behaviour to define various charsets to be used to draw the trees.
+  """
+
   @callback top_left_corner() :: String.t()
   @callback top_right_corner() :: String.t()
   @callback bottom_left_corner() :: String.t()

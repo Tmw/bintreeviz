@@ -12,13 +12,13 @@ defmodule Bintreeviz do
   The renderer takes a keyword list with configuration options:
 
   * `renderer`
-  Which renderer to use. It will default to the ASCII renderer which will render the tree using [Box Drawing Characters](https://en.wikipedia.org/wiki/Box-drawing_character) and can be printed to stdout as shown in the examples.
+  Which renderer to use. It will default to the ASCII (`Bintreeviz.Renderer.Ascii`) renderer which will render the tree using [Box Drawing Characters](https://en.wikipedia.org/wiki/Box-drawing_character) and can be printed to stdout as shown in the examples.
 
   * `positioner`
   Which positioning algorithm to use. It defaults to Wetherell and Shannon (WS).
 
   * `ascii_renderer_charset`
-  Renderer specific configuration to configure which charset to use while rendering using the ASCII renderer.
+  Renderer specific configuration to configure which charset to use while rendering using the ASCII renderer. Defaults to `Bintreeviz.Renderer.Ascii.Charset.BoxDrawingChars`. Other options are: `Bintreeviz.Renderer.Ascii.Charset.SimpleDrawingChars`.
   """
 
   alias Bintreeviz.{
