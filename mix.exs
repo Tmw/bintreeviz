@@ -1,17 +1,19 @@
 defmodule Bintreeviz.MixProject do
   use Mix.Project
 
+  @version "0.1.0"
+
   def project do
     [
       app: :bintreeviz,
-      version: "0.1.0",
-      elixir: "~> 1.9",
+      version: @version,
+      elixir: "~> 1.10",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      docs: [
-        extras: ["README.md"]
-      ]
+      description: description(),
+      package: package(),
+      docs: docs()
     ]
   end
 
@@ -19,6 +21,33 @@ defmodule Bintreeviz.MixProject do
   def application do
     [
       extra_applications: [:logger]
+    ]
+  end
+
+  defp description do
+    """
+    Bintreeviz renders binary tree structures to string. Out of the box it supports positioning using the WS algorithm and renders to ASCII.
+    """
+  end
+
+  defp package() do
+    [
+      maintainers: ["Tiemen Waterreus"],
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/tmw/bintreeviz"}
+    ]
+  end
+
+  defp docs() do
+    [
+      main: "readme",
+      name: "Bintreeviz",
+      source_ref: "v#{@version}",
+      canonical: "http://hexdocs.pm/bintreeviz",
+      source_url: "https://github.com/tmw/bintreeviz",
+      extras: [
+        "README.md"
+      ]
     ]
   end
 
