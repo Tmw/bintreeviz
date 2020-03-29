@@ -130,6 +130,6 @@ defmodule Bintreeviz.Renderer.Ascii do
   end
 
   defp repeat_char(times, char) do
-    for _i <- 0..(times - 1), do: char
+    String.duplicate(char, times)
   end
 end
